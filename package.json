@@ -1,0 +1,86 @@
+{
+  "name": "gitlab_todo",
+  "version": "0.1.0",
+  "private": true,
+  "author": "danobot",
+  "description": "todo app",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.27",
+    "@fortawesome/free-regular-svg-icons": "^5.12.1",
+    "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@fortawesome/react-fontawesome": "^0.1.8",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^7.2.1",
+    "antd": "^3.26.9",
+    "electron-is-dev": "^1.1.0",
+    "electron-log": "^4.0.6",
+    "electron-store": "^5.1.0",
+    "electron-updater": "^4.2.2",
+    "formik": "^2.1.4",
+    "gitlab": "^14.2.2",
+    "node-sass": "^4.13.1",
+    "openapi-client-axios": "^3.3.2",
+    "react": "^16.12.0",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-dnd": "^10.0.2",
+    "react-dnd-html5-backend": "^10.0.2",
+    "react-dom": "^16.12.0",
+    "react-moment": "^0.9.7",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.0",
+    "react-sidebar": "^3.0.2",
+    "uifx": "^2.0.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-dev": "concurrently \" yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "react-start": "react-scripts start",
+    "electron-build": "yarn build && electron-builder build --win --publish never",
+    "dist": "yarn build && electron-builder build --win --publish always",
+    "postinstall": "install-app-deps",
+    "dockerbuild": "docker build -t danobot/gitlab_todo ."
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "proxy": "http://localhost:3000/",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^5.1.0",
+    "electron": "^8.0.1",
+    "electron-builder": "^22.3.2",
+    "electron-packager": "^14.2.1",
+    "openapi-client": "^1.0.5",
+    "wait-on": "^4.0.0"
+  },
+  "homepage": "./",
+  "main": "public/electron.js",
+  "build": {
+    "appId": "net.danielbkr.gitlab_todo",
+    "files": [
+      "build/**/*",
+      "package.json",
+      "./public/electron.js"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {}
+  }
+}

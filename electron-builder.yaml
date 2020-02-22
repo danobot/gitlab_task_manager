@@ -1,0 +1,5 @@
+appId: net.danielbkr.gitlab-task-manager
+publish:
+  provider: s3
+  bucket: ''
+  acl: public-read

@@ -1,0 +1,127 @@
+@import "~antd/dist/antd.css";
+
+.App {
+  text-align: center;
+}
+
+$base-color: rgba(26, 27, 28, 1);
+$base-color-lifted: rgb(37, 38, 39);
+$base-color-highlight: rgb(56, 58, 59);
+$base-color-hover: rgba(150, 150, 150, 0.3);
+$text-color: rgba(217, 217, 217, 1);
+$heading-color: rgba(120, 140, 222, 1);
+.text-muted {
+  color: $base-color-lifted !important;
+}
+.heading-color {
+  color: $heading-color;
+}
+.ant-timeline-item-head {
+  color: $heading-color;
+}
+.ant-timeline-item-head-blue {
+  border-color: $base-color-highlight;
+}
+.todo-row:hover {
+  background-color: $base-color-hover;
+}
+.todo-row {
+  background: $base-color-lifted;
+  color: $text-color;
+  margin: 0px 15px 2px 15px;
+  padding: 18px 13px;
+}
+.ant-tag {
+  border: none;
+  background: $base-color-highlight;
+  color: $heading-color;
+  &.todo-labels {
+    cursor: pointer;
+  }
+}
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.ant-layout {
+  height: 100%;
+  background: unset;
+  color: $text-color;
+}
+.sidebar * {
+  color: $text-color;
+}
+.sidebar {
+  .ant-input {
+    background: $base-color-lifted;
+    border: none;
+  }
+}
+.ant-btn {
+  background: $base-color-hover;
+  color: $text-color;
+  border: none;
+}
+.ant-btn:hover {
+  background: $base-color-highlight;
+}
+.ant-input:focus,
+.ant-input:hover {
+  background: $base-color-highlight;
+  border: none;
+  outline: none;
+}
+.ant-list-item {
+  justify-content: unset;
+}
+
+.ant-card-body {
+  padding: 0;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0px;
+  overflow: hidden;
+}
+body,
+.ant-card,
+.ant-page-header,
+.ant-typography,
+.ant-menu-dark,
+.ant-menu-dark .ant-menu-sub,
+.ant-page-header-heading-title,
+.ant-statistic-content,
+.ant-statistic {
+  color: $text-color !important;
+
+  background: $base-color;
+}
+.ant-timeline-item {
+  padding: 0 0 5px;
+}
+h2.ant-typography,
+.ant-typography h2 {
+  color: $heading-color !important;
+}
+.ant-menu-dark,
+.ant-menu-dark .ant-menu-sub {
+  box-shadow: none;
+  background: $base-color-lifted;
+}
+.ant-menu-dark .ant-menu-inline.ant-menu-sub {
+  background: $base-color-lifted;
+  box-shadow: none;
+}
+.root {
+  min-height: 100%;
+  bottom: 0;
+  top: 0;
+  position: absolute;
+  right: 0;
+  left: 0;
+}
