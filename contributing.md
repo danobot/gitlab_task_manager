@@ -10,7 +10,7 @@ Typo corrections, error fixes, better explanations, more examples etc. Open an i
 
 ### Improve issues
 
-Sometimes reported issues lack information, are not reproducible, or are even plain invalid. Help us out to make them easier to resolve. Handling issues takes a lot of time that we could rather spend on fixing bugs and adding features.
+Sometimes reported issues lack information, are not reproducible, or are even plain invalid. Help us out to make them easier to resolve. Handling issues takes a lot of time that we could rather spend on adding features.
 
 ### Give feedback on issues
 
