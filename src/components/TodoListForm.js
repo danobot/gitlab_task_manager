@@ -31,6 +31,7 @@ const TodoListForm = ({ onSubmit }) => (
                         <Form.Item>
                             <Input
                                 name="name"
+                                placeholder="List Title"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.name} />

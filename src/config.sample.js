@@ -3,6 +3,5 @@ export const LIST_SEPARATOR = '::'
 export const LABEL_STARRED = 'meta::starred'
 export const LABEL_MYDAY = 'meta::myday'
 
-// export const GITLAB_HOST = 'https://gitlab.danielbkr.net'
 export const GITLAB_HOST = 'http://localhost'
 export const GITLAB_TOKEN = 'JCs68tSXFEsytm9VY_zU'

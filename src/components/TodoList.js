@@ -126,7 +126,7 @@ class TodoList extends React.Component {
           // breadcrumb={{ route's }}
         ></PageHeader>
         <Row style={{ flexGrow: 1 }}>
-          <Col span={this.state.visible ? 18 : 24} style={{ height: "100%" }}>
+          <Col span={this.state.visible ? 14 : 24} style={{ height: "100%" }}>
             <Scrollbars autoHide style={{ flexGrow: 1 }}>
               {this.props.issues.length > 0 ? (
                 <List
@@ -211,7 +211,7 @@ class TodoList extends React.Component {
             </Formik>
           </Col>
           <Col
-            span={this.state.visible ? 6 : 0}
+            span={this.state.visible ? 10 : 0}
             className="sidebar"
             style={{ height: "100%" }}
           >
@@ -220,7 +220,6 @@ class TodoList extends React.Component {
                 <Card theme="dark" bordered={false} style={{ padding: 0 }}>
                   <PageHeader
                     style={{ padding: 0, margin: "0 0 20px 0" }}
-                    onBack={() => null}
                     title={this.state.issue.title}
                     subTitle={`#${this.state.issue.iid}`}
                     extra={[
