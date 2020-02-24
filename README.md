@@ -1,7 +1,7 @@
 
 
 <div align="center">
-  <a href="https://github.com/danobot/giltab_task_manager">
+  <a href="https://github.com/danobot/gitlab_task_manager">
     <img src="img/main_window.png" alt="GTM Main Window" width="93%">
   </a>
 </div>
@@ -23,7 +23,7 @@ Gitlab Task Manager is a task manager application which hooks into Gitlab's Issu
 * View all issues with a particular label by clicking on the label itself
 
 <div align="center">
-  <a href="https://github.com/danobot/giltab_task_manager">
+  <a href="https://github.com/danobot/gitlab_task_manager">
     <img src="img/sidebar.png" alt="GTM Main Window" width="93%">
   </a>
 </div>
@@ -32,7 +32,7 @@ Gitlab Task Manager is a task manager application which hooks into Gitlab's Issu
 As I work on many hobby projects at the same time, I felt the need to add comments to a task as a place to note down decisions, research and root cause analysis findings. I really liked the look and feel of Microsoft Todo and the functionality of Gitlab's issue tracker and wanted to combine them into one easy-to-use tool.
 
 ## Implementation
-This application was bootstrapped using Create React App and is distributed as a Docker web applciation as well as an Electron Desktop App.
+This application was bootstrapped using Create React App and is distributed as a Docker web application as well as an Electron Desktop App.
 
 
 ## Getting Started
