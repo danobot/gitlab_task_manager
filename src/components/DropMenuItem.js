@@ -1,9 +1,10 @@
 import React from 'react';
 // import { useDrop } from 'react-dnd'
 import {  Menu } from 'antd';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const DropMenuItem = (props) => {
-    let { label, icon } = props
+    let { label, icon,right, faIcon } = props
     // const [{ canDrop, isOver }, drop] = useDrop({
     //     accept: 'box',
     //     drop: () => ({ name: 'Dustbin' }),
@@ -12,7 +13,8 @@ const DropMenuItem = (props) => {
     //       canDrop: monitor.canDrop(),
     //     }),
     //   })
-return <Menu.Item {...props} ><span style={{marginRight: '10px'}} >{icon}</span>   {label}</Menu.Item>
+    return <Menu.Item {...props} >{faIcon ? faIcon : <FontAwesomeIcon icon={icon} style={{marginRight: '20px'}} /> }  {label}<div className="menu-right " >{right}</div></Menu.Item>
+                    
     }
 
 export default DropMenuItem;

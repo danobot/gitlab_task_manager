@@ -1,15 +1,15 @@
 import React from "react";
 import "./App.scss";
 import "./custom.scss";
-// import "./theme.scss";
-import { Layout, Menu, Popover, message, Divider } from "antd";
+import { Layout, Menu, Popover, message} from "antd";
 
 import TodoList from "./components/TodoList";
 import { gitlab } from "./api/gitlab";
 import TodoListForm from "./components/TodoListForm";
+import SearchForm from "./components/SearchForm";
 import { LIST_SEPARATOR, PROJECT_ID } from "./config";
 import DropMenuItem from "./components/DropMenuItem";
-import { faSquare } from "@fortawesome/free-solid-svg-icons";
+import { faSquare, faStar, faTasks, faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,39 +21,33 @@ class App extends React.Component {
   state = {
     accounts: [],
     addListVisible: false,
-    allIssues: []
+    allIssues: [],
+    search: null
   };
   componentDidMount = () => {
     // Get all labels
+    console.log("compo")
     let localLabels = JSON.parse(localStorage.getItem("labels"));
-    console.log("Using local labels", localLabels);
+    // console.log("Using local labels", localLabels);
     if (localLabels != null && localLabels.length > 0) {
-      console.log("Using local labels", localLabels);
-      console.log("Using local labels", localLabels[0]);
-
+      // console.log("Using local labels", localLabels);
+      const selectedList = JSON.parse(localStorage.getItem("selectedList"))
       this.setState({
         ...this.state,
-        label: localLabels[0],
+        label: selectedList? selectedList : localLabels[0],
         labels: localLabels
       });
     } else {
       if (!this.state.labels ) {
-        gitlab.Labels.all(PROJECT_ID).then(labels => {
-          const filteredLabels = labels.filter(
-            l => l.name.indexOf("list" + LIST_SEPARATOR) === 0
-          );
-          console.log("Labels received: ", filteredLabels);
-          localStorage.setItem("labels", JSON.stringify(filteredLabels));
-          this.setState({ ...this.state, labels: filteredLabels, label: filteredLabels[0] });
-        });
+        this.updateAllLabels();
       }
     }
 
     // get al Tasks
     let localTodos = JSON.parse(localStorage.getItem("allIssues"));
-    console.log("localTodos: ", localTodos);
+    // console.log("localTodos: ", localTodos);
     if (localTodos != null && localTodos.length > 0) {
-      console.log("Using local Todods");
+      // console.log("Using local Todods");
       this.setState({
         ...this.state,
         allIssues: localTodos.sort((a, b) => a.id - b.id)
@@ -61,7 +55,7 @@ class App extends React.Component {
       });
     } else {
       if (this.state.allIssues.length === 0) {
-        console.log("State issues.length is 0");
+        // console.log("State issues.length is 0");
         this.updateTodos(this.state.label);
       }
     } // when you remove from my day the issue loses all labels except my day.
@@ -77,6 +71,16 @@ class App extends React.Component {
       this.setState({ ...this.state, labels: this.state.labels, label: e });
     });
   };
+  updateAllLabels = () => {
+    gitlab.Labels.all(PROJECT_ID).then(labels => {
+      const filteredLabels = labels.filter(
+        l => l.name.indexOf("list" + LIST_SEPARATOR) === 0
+      );
+      console.log("Labels received: ", filteredLabels);
+      localStorage.setItem("labels", JSON.stringify(filteredLabels));
+      this.setState({ ...this.state, labels: filteredLabels, label: filteredLabels[0] });
+    });
+  }
   hide = () => {
     this.setState({
       addListVisible: false
@@ -92,6 +96,7 @@ class App extends React.Component {
       localStorage.setItem("allIssues", JSON.stringify(sortedTasks));
       this.setState({ ...this.state, allIssues: sortedTasks});
     });
+    this.updateAllLabels()
   };
   updateTodo = issue => {
     console.log("updtaeTood: ", issue);
@@ -119,9 +124,36 @@ class App extends React.Component {
   onSetSidebarOpen = open => {
     this.setState({ sidebarOpen: open });
   };
-
+  selectTaskList = (list) => {
+    
+    this.setState({label: list, search: null})
+    localStorage.setItem("selectedList", JSON.stringify(list))
+  }
 
   render() {
+    const mydaycount = this.state.allIssues.filter(i=> hasLabel(i, "meta::myday")).length
+    let issuesToDisplay = []
+    let todoListId = this.state.search ? 'search' :  (this.state.label ? this.state.label.id : 'other')
+    const labelProp = this.state.search ? null : this.state.label
+    let titleProp = 'test'
+
+    if (this.state.search) {
+      titleProp = "Search for \"" +this.state.search + "\""
+      console.log("searching fo r", this.state.search)
+      const s = this.state.search.toLowerCase()
+      issuesToDisplay = this.state.allIssues.filter(i=> (i.title && i.title.toLowerCase().indexOf(s) > -1) || (i.description && i.description.toLowerCase().indexOf(s) > -1))
+    } else {
+      if (this.state.label) {
+        titleProp = this.state.label.title ? this.state.label.title  :  getActualLabelName(this.state.label)
+        issuesToDisplay = this.state.allIssues.filter(i => {
+          if (this.state.label.name === "ALL") {
+            return hasNoListLabel(i)
+          } else {
+            return hasLabel(i, this.state.label.name)
+          }
+          }).sort((a, b) => a.id - b.id)
+        }
+      }
     return (
       <Layout theme="dark">
         <Layout  theme="dark">
@@ -129,6 +161,11 @@ class App extends React.Component {
             width={250}
             style={{ background: "$base-color", sidebar: { zIndex: 0 } }}
           >
+            <div>
+              <SearchForm onSubmit={search => {
+                this.setState({search: search.search})
+              }}/>
+            </div>
             <Menu 
             theme="dark"
               mode="inline"
@@ -138,38 +175,46 @@ class App extends React.Component {
             >
               <DropMenuItem
                 onClick={e => {
-                  this.setState({ label: { name: "meta::myday", title: "My Day" } });
+                  this.selectTaskList({  name: "meta::myday", title: "My Day" } );
                 }}
+                icon={faCalendarDay}
+                right={mydaycount}
                 key={"meta::myday"}
                 label="My Day"
                 title="My Day"
               />
               <DropMenuItem
                 onClick={e => {
-                  this.setState({ label: {name: "ALL", title: "My Tasks"}});
+                  this.selectTaskList({ name: "ALL", title: "My Tasks"});
                 }}
+                icon={faTasks}
+                right={this.state.allIssues.filter(i=> hasNoListLabel(i)).length}
                 key="mytasks"
                 label="My Tasks"
                 title="My Tasks"
               />
               <DropMenuItem
                 onClick={e => {
-                  this.setState({ label: { name: "meta::starred", title: "Important Tasks" } });
+                  this.selectTaskList({  name: "meta::starred", title: "Important Tasks" } );
                 }}
+                icon={faStar}
+                right={this.state.allIssues.filter(i=> hasLabel(i, "meta::starred")).length}
+
                 key={"meta::starred"}
                 label="Important"
                 title="Important"
               />
-                   <Divider />
+                   <Menu.Divider />
              
             
                 { this.state.labels &&
                   this.state.labels.map(l => (
                     <DropMenuItem
-                      onClick={e => this.setState({ label: l })}
+                      onClick={e => this.selectTaskList( l )}
                       key={l.id}
                       label={getActualLabelName(l)}
-                      icon={<FontAwesomeIcon icon={faSquare} color={l.color} size="lg" />}
+                      right={this.state.allIssues.filter(i=> hasLabel(i, l.name)).length}
+                      faIcon={<FontAwesomeIcon icon={faSquare} color={l.color} size="lg" style={{marginRight: '20px'}} />}
                     />
                   ))}
                <span>
@@ -195,20 +240,12 @@ class App extends React.Component {
               }}
             >
               {this.state.label && (
-                <TodoList key={this.state.label.id} label={this.state.label} title={this.state.label.title ? this.state.label.title : getActualLabelName(this.state.label)}
+                <TodoList key={todoListId} label={labelProp} title={titleProp}
                 updateTodo={this.updateTodo}
                 updateTodos={this.updateTodos}
-                  issues={
-                    this.state.allIssues.filter(i => {
-                      if (this.state.label.name === "ALL") {
-                        return hasNoListLabel(i)
-                      } else {
-                        return hasLabel(i, this.state.label.name)
-                      }
-                      }).sort((a, b) => a.id - b.id)
-                } 
+                issues={issuesToDisplay} 
                 onSelectLabel={
-                  label => this.setState({label: {name: label, title: label}})
+                  label => this.setState({label: {name: label, title: label}}) // not using select task list because we dont want to persist this
                 } />
               )}
             </Content>

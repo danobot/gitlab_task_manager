@@ -151,13 +151,28 @@ class TodoList extends React.Component {
                 ></div>
               )}
             </Scrollbars>
-
+            { this.props.label &&
             <Formik
               initialValues={{ title: "" }}
               onSubmit={(values, { setSubmitting }) => {
                 const title = values.title;
                 values.title = "";
-                createIssue(PROJECT_ID, title, this.props.label.name).then(
+                const regex = /\#(\w*)/gm;
+                let m;
+                let labels = [];
+                while ((m = regex.exec(values.title)) !== null) {
+                    // This is necessary to avoid infinite loops with zero-width matches
+                    if (m.index === regex.lastIndex) {
+                        regex.lastIndex++;
+                    }
+                    
+                    // The result can be accessed through the `m`-variable.
+                    m.forEach((match, groupIndex) => {
+                        console.log(`Found match, group ${groupIndex}: ${match}`);
+                    });
+                }
+                const data = {title, labels: [this.props.label.name, ...labels]}
+                createIssue(PROJECT_ID, title, data).then(
                   i => {
                     var issues = this.props.issues;
                     issues.push(i);
@@ -193,7 +208,7 @@ class TodoList extends React.Component {
                       left: "0",
                       right: "0",
                       height: "50px",
-                      margin: "inherit 16px inherit 0",
+                      margin: "10px 16px 16px 16px",
                       width: "calc(100% - 29px)",
                       background: "$base-color-lifted"
                       // padding: 0,
@@ -209,6 +224,7 @@ class TodoList extends React.Component {
                 </Form>
               )}
             </Formik>
+            }
           </Col>
           <Col
             span={this.state.visible ? 10 : 0}

@@ -23,12 +23,8 @@ export async function getComments(project, issue) {
   console.log("Getting comments for : issue: " + issue + " on project " + project)
   return gitlab.IssueNotes.all(project,issue) // issue id somehow incorrect
 }
-export async function createIssue(project,title, list) {
-  let labels = []
-  if (list !== "ALL") {
-    labels = [list]
-  }
-  return gitlab.Issues.create(project,{title: title, labels: labels})
+export async function createIssue(project, data) {
+  return gitlab.Issues.create(project,data)
 }
 export async function starIssue(project, issue) {
   console.log("starIssue" , issue)

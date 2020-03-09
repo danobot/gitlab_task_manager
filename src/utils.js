@@ -17,7 +17,6 @@ export const removeMetaLabels = labels => {
   const val = labels.filter(
     l => l.indexOf("list") === -1 && l.indexOf("meta") === -1
   );
-  console.log("hasLabel result", val);
 
   return val;
 };

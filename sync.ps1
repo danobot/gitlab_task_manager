@@ -1,0 +1,1 @@
+robocopy . C:\Users\danie\Documents\repos\gitlab_task_manager_github /MIR /W:5 /XD node_modules /XD .git /XD dist /XD build /XD .vscode
