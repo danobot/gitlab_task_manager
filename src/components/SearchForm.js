@@ -24,7 +24,7 @@ const SearchForm = ({ onSubmit }) => (
             }) => (
                     <Form onSubmit={handleSubmit}>
                         <Row>
-                            <Col span={24}>
+                            <Col span={24} className="search-bar">
                             <Input
                                 name="search"
                                 placeholder="Search"

@@ -20,6 +20,7 @@ Gitlab Task Manager is a task manager application which hooks into Gitlab's Issu
 * Clear all completed tasks
 * Leave comments on tasks that appear as comments in Gitlab
 * Create new task lists from the app
+* Assign task labels using hashtags (e.g. "Get Milk #shopping" )
 * View all issues with a particular label by clicking on the label itself
 
 <div align="center">
@@ -47,8 +48,8 @@ yarn start
 
 In the project directory, you can run:
 
-* Run for development `yarn start`
-* Build the electron app `yarn electron-build`
+* Run for development `yarn dev`
+* Build the electron app `yarn dist`  (If this fails, run `npm install` first.)
 * Build and publish Electron App `yarn dist`
 * Run Electron build on Linux using Docker `bash dist.sh`
 * Build docker image  `yarn docker-build`

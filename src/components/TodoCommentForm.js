@@ -4,7 +4,7 @@ import { Input, Form, message, Button } from "antd";
 import { addComment } from "../api/gitlab";
 const { TextArea } = Input;
 const TodoCommentForm = ({ issue, addCommentCb }) => (
-  <div>
+  <div >
     <Formik
       initialValues={issue}
       onSubmit={(values, { setSubmitting }) => {
@@ -35,7 +35,7 @@ const TodoCommentForm = ({ issue, addCommentCb }) => (
         /* and other goodies */
       }) => (
         <Form onSubmit={handleSubmit}>
-          <Form.Item>
+          <Form.Item style={{marginBottom: '5px'}}>
             <TextArea
               rows={4}
               placeholder="Add a comment"
@@ -48,9 +48,9 @@ const TodoCommentForm = ({ issue, addCommentCb }) => (
           </Form.Item>
 
           <Button
+          style={{marginBottom: '30px', float: 'right'}}
             type="primary"
             size="small"
-            style={{ float: "right" }}
             onClick={handleSubmit}
           >
             Save

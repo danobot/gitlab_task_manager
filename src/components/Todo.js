@@ -75,6 +75,7 @@ const Todo = ({ onUpdate, onSelect, issue, onSelectLabel }) => {
     }
   };
   const starred = hasLabel(issue, "meta" + LIST_SEPARATOR + "starred");
+  const myDay = hasLabel(issue, "meta" + LIST_SEPARATOR + "myday");
 
   const handleStarClick = () => {
     console.log("Stargging issue");
@@ -100,15 +101,19 @@ const Todo = ({ onUpdate, onSelect, issue, onSelectLabel }) => {
     todoStyle.textDecoration = "line-through";
     todoStyle.color = "darkgray";
   }
+  let rowStyle = {
+    // border: "gray 2px solid",
+    borderRadius: "4px",
+    transition: "all 0.3s",
+  }
+  if (myDay) {
+    todoStyle.fontWeight = "bold";
+  }
 
   return issue && !isDragging ? (
     <Row
       className="todo-row"
-      style={{
-        // border: "gray 2px solid",
-        borderRadius: "4px",
-        transition: "all 0.3s"
-      }}
+      style={rowStyle}
     >
       <div
         className="vertical-center"

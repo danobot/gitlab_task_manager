@@ -5,15 +5,14 @@ import {
   addIssueToMyDay,
   removeIssueFromMyDay
 } from "../api/gitlab";
+import {extractLabels} from '../utils'
 import Todo from "./Todo";
 import { PROJECT_ID, LABEL_MYDAY } from "../config";
 import { Formik } from "formik";
 import {
   List,
   Button,
-  Skeleton,
   Card,
-  Descriptions,
   message,
   PageHeader,
   Row,
@@ -148,31 +147,21 @@ class TodoList extends React.Component {
                 <div
                   className="vertical-center"
                   style={{ textAlign: "center" }}
-                ></div>
+              >{this.props.empty ? this.props.empty : ''}</div>
               )}
             </Scrollbars>
             { this.props.label &&
             <Formik
               initialValues={{ title: "" }}
               onSubmit={(values, { setSubmitting }) => {
-                const title = values.title;
+                console.log(values)
+                let title = (' ' + values.title).slice(1);
+                
+                const data = extractLabels(title, this.props.label.name);
+                console.log(data)
                 values.title = "";
-                const regex = /\#(\w*)/gm;
-                let m;
-                let labels = [];
-                while ((m = regex.exec(values.title)) !== null) {
-                    // This is necessary to avoid infinite loops with zero-width matches
-                    if (m.index === regex.lastIndex) {
-                        regex.lastIndex++;
-                    }
-                    
-                    // The result can be accessed through the `m`-variable.
-                    m.forEach((match, groupIndex) => {
-                        console.log(`Found match, group ${groupIndex}: ${match}`);
-                    });
-                }
-                const data = {title, labels: [this.props.label.name, ...labels]}
-                createIssue(PROJECT_ID, title, data).then(
+
+                createIssue(PROJECT_ID, data).then(
                   i => {
                     var issues = this.props.issues;
                     issues.push(i);
@@ -208,7 +197,8 @@ class TodoList extends React.Component {
                       left: "0",
                       right: "0",
                       height: "50px",
-                      margin: "10px 16px 16px 16px",
+                      bottom: "-52px",
+                      margin: "10px 16px 7px 16px",
                       width: "calc(100% - 29px)",
                       background: "$base-color-lifted"
                       // padding: 0,
@@ -233,7 +223,7 @@ class TodoList extends React.Component {
           >
             <Scrollbars autoHide style={{ flexGrow: 1 }}>
               {this.state.issue && (
-                <Card theme="dark" bordered={false} style={{ padding: 0 }}>
+                <Card theme="dark" bordered={false} style={{ padding: 0 }} className="sidebar-right">
                   <PageHeader
                     style={{ padding: 0, margin: "0 0 20px 0" }}
                     title={this.state.issue.title}
@@ -286,7 +276,7 @@ class TodoList extends React.Component {
                               className="text-muted"
                               style={{ float: "right" }}
                               fromNow
-                              format="MMM Do"
+                              format="MMM D"
                             >
                               {c.created_at}
                             </Moment>
@@ -294,26 +284,31 @@ class TodoList extends React.Component {
                         ))
                     ) : <p>No notes yet</p>}
                   </Timeline>
-                  <TodoCommentForm
+                  <TodoCommentForm style={{marginBottom: '20px'}}
                     issue={this.state.issue}
                     addCommentCb={this.addCommentCb}
                   />
+                    {this.state.issue && (
+                    <div className="detail-footer text-muted">
+                        <Moment style={{paddingTop: '10px'}} className=" text-muted " format="MMM D, YYYY hh:mm a">
+                          {this.state.issue.created_at}
+                        </Moment>
+
+                          
+                        <Button
+                          style={{ position: "fixed", "right": '27px',bottom: '5px', border: "none" }}
+                          onClick={e => console.log("Delete")}
+                        >
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </Button>
+
+                    </div>
+                  )}
                 </Card>
               )}
-              {this.state.issue && (
-                <div className="detail-footer text-muted">
-                  <Moment className=" text-muted" format="MMMM Do YYYY hh:mm a">
-                    {this.state.issue.created_at}
-                  </Moment>
-                  <Button
-                    onClick={e => console.log("Delete")}
-                    style={{ float: "right", border: "none" }}
-                  >
-                    <FontAwesomeIcon icon={faTrashAlt} />
-                  </Button>
-                </div>
-              )}
+            
             </Scrollbars>
+           
           </Col>
           {/* <Col span={this.state.visible ? 18 : 24} style={{ height: "100%" }}>
 
@@ -323,6 +318,8 @@ class TodoList extends React.Component {
       </div>
     );
   }
+
+  
 }
 
 export default TodoList;

@@ -11,3 +11,10 @@ services:
       - '/app/node_modules'
     ports:
       - '3001:3000'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=public"
+      - "traefik.http.routers.todo.rule=Host(`app.example.com`)"
+      - "traefik.http.routers.todo.entrypoints=https,http"
+      - "traefik.http.routers.todo.tls.certresolver=myhttpchallenge"
+      - "traefik.http.routers.todo.middlewares=danielauth@file,redirecthttps@file"

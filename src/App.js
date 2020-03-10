@@ -13,7 +13,7 @@ import { faSquare, faStar, faTasks, faCalendarDay } from "@fortawesome/free-soli
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getActualLabelName, hasLabel, hasNoListLabel } from "./utils";
+import { getActualLabelName, hasLabel, hasNoListLabel, filterExcluded } from "./utils";
 
 const { Content, Sider } = Layout;
 
@@ -148,6 +148,8 @@ class App extends React.Component {
         issuesToDisplay = this.state.allIssues.filter(i => {
           if (this.state.label.name === "ALL") {
             return hasNoListLabel(i)
+          } else if (this.state.label.name !== "meta::archived" && i.labels.indexOf("meta::archived") > -1) {
+            return false
           } else {
             return hasLabel(i, this.state.label.name)
           }
@@ -188,7 +190,7 @@ class App extends React.Component {
                   this.selectTaskList({ name: "ALL", title: "My Tasks"});
                 }}
                 icon={faTasks}
-                right={this.state.allIssues.filter(i=> hasNoListLabel(i)).length}
+                right={filterExcluded(this.state.allIssues.filter(i=> hasNoListLabel(i))).length}
                 key="mytasks"
                 label="My Tasks"
                 title="My Tasks"
@@ -198,7 +200,7 @@ class App extends React.Component {
                   this.selectTaskList({  name: "meta::starred", title: "Important Tasks" } );
                 }}
                 icon={faStar}
-                right={this.state.allIssues.filter(i=> hasLabel(i, "meta::starred")).length}
+                right={filterExcluded(this.state.allIssues.filter(i=> hasLabel(i, "meta::starred"))).length}
 
                 key={"meta::starred"}
                 label="Important"
@@ -213,7 +215,7 @@ class App extends React.Component {
                       onClick={e => this.selectTaskList( l )}
                       key={l.id}
                       label={getActualLabelName(l)}
-                      right={this.state.allIssues.filter(i=> hasLabel(i, l.name)).length}
+                      right={filterExcluded(this.state.allIssues.filter(i=> hasLabel(i, l.name))).length}
                       faIcon={<FontAwesomeIcon icon={faSquare} color={l.color} size="lg" style={{marginRight: '20px'}} />}
                     />
                   ))}
@@ -229,7 +231,13 @@ class App extends React.Component {
                       <FontAwesomeIcon icon={faPlusSquare} className="heading-color" style={{ float: "right", cursor: 'hand', marginRight: '17px' }} size="lg" onClick={e => this.handleVisibleChange()}/>
                     </Popover>
                   </span>
+            <div onClick={e => {
+                  this.selectTaskList({  name: "meta::archived", title: "Archived Tasks" } );
+                }} style={{padding: "10px 10px 0px 10px"}}>
+              <span className="text-muted">Archived</span>
+            </div>
             </Menu>
+            
           </Sider>
 
           <Layout style={{ padding: "0", minHeight: "100%" }}>

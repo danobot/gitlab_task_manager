@@ -1,10 +1,24 @@
+@import "./variables.scss";
 .detail-footer {
-  margin: 20px 0 0 0;
+  margin: 46px 0 0 0;
   padding: 10px 0px 0px 0px;
   height: 40px;
+  display: block;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
 .todo-p p {
   margin: 0;
   padding: 0;
+}
+
+.text-muted {
+  color: $textmuted-color !important;
+}
+
+.search-bar {
+  padding: 10px;
+  background-color: $base-color-lifted;
 }

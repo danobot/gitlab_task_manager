@@ -1,18 +1,11 @@
 @import "~antd/dist/antd.css";
+@import "./variables.scss";
 
 .App {
   text-align: center;
 }
 
-$base-color: rgba(26, 27, 28, 1);
-$base-color-lifted: rgb(37, 38, 39);
-$base-color-highlight: rgb(56, 58, 59);
-$base-color-hover: rgba(150, 150, 150, 0.3);
-$text-color: rgba(217, 217, 217, 1);
-$heading-color: rgba(120, 140, 222, 1);
-.text-muted {
-  color: $base-color-lifted !important;
-}
+
 .heading-color {
   color: $heading-color;
 }
@@ -30,6 +23,9 @@ $heading-color: rgba(120, 140, 222, 1);
   color: $text-color;
   margin: 0px 15px 2px 15px;
   padding: 18px 13px;
+}
+.sidebar-right {
+  background-color: $base-color-lifted;
 }
 .ant-tag {
   border: none;
@@ -53,8 +49,11 @@ $heading-color: rgba(120, 140, 222, 1);
 }
 .sidebar * {
   color: $text-color;
+ 
 }
-
+.ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
+  background-color: $heading-color;
+}
 .ant-btn {
   background: $base-color-hover;
   color: $text-color;
@@ -64,7 +63,7 @@ $heading-color: rgba(120, 140, 222, 1);
   background: $base-color-highlight;
 }
 .ant-input {
-  background: $base-color-lifted;
+  background: $base-color-input;
   border: none;
   color: $text-color;
   
