@@ -1,5 +1,5 @@
-import { LIST_SEPARATOR } from "./config";
-const ignoredLabels = ["ALL", "meta::archived"];
+import { LIST_SEPARATOR, LABEL_ARCHIVED } from "./config";
+const ignoredLabels = ["ALL", LABEL_ARCHIVED];
 
 export const hasLabel = (issue, label) => {
   // console.log("hasLabel issue" ,issue.labels)
@@ -38,7 +38,7 @@ export const titleCase = string => {
 };
 // problem is that when adding the myday label then all othe labels are removed
 export const extractLabels = (title, list) => {
-  const regex = /\#(\w*)/gm;
+  const regex = /#(\w*)/gm;
   let m;
   let labels = [];
   if (ignoredLabels.indexOf(list) === -1) {

@@ -3,7 +3,9 @@ import {
   getComments,
   createIssue,
   addIssueToMyDay,
-  removeIssueFromMyDay
+  removeIssueFromMyDay,
+  addIssueArchive,
+  deleteIssue
 } from "../api/gitlab";
 import {extractLabels} from '../utils'
 import Todo from "./Todo";
@@ -29,7 +31,8 @@ import { Scrollbars } from "react-custom-scrollbars";
 import {
   faSyncAlt,
   faTrashAlt,
-  faSun
+  faSun,
+  faArchive
 } from "@fortawesome/free-solid-svg-icons";
 import { faSun as faSunOutline } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -222,7 +225,7 @@ class TodoList extends React.Component {
             style={{ height: "100%" }}
           >
             <Scrollbars autoHide style={{ flexGrow: 1 }}>
-              {this.state.issue && (
+              {(this.state.issue && this.state.issue !== null) && (
                 <Card theme="dark" bordered={false} style={{ padding: 0 }} className="sidebar-right">
                   <PageHeader
                     style={{ padding: 0, margin: "0 0 20px 0" }}
@@ -294,13 +297,28 @@ class TodoList extends React.Component {
                           {this.state.issue.created_at}
                         </Moment>
 
-                          
-                        <Button
-                          style={{ position: "fixed", "right": '27px',bottom: '5px', border: "none" }}
-                          onClick={e => console.log("Delete")}
+                          <div style={{ position: "fixed", "right": '10px',bottom: '5px', border: "none",zIndex: 20 }}>
+
+                        <Button size="small" className=" text-muted "
+                          style={{  border: "none" , marginRight: "2px" }}
+                          onClick={e => addIssueArchive(this.state.issue.project_id, this.state.issue).then(r => {
+                            this.props.updateTodo(r);
+                            this.setState({visible : false});
+                          })}
+                        >
+                          <FontAwesomeIcon icon={faArchive} />
+                        </Button>
+                        <Button size="small" className=" text-muted "
+                          style={{  border: "none", marginRight: "2px" }}
+                          onClick={e => {
+                            deleteIssue(this.state.issue.project_id, this.state.issue).then(r=>{
+                              this.props.removeTodo(r)
+                            })
+                          }}
                         >
                           <FontAwesomeIcon icon={faTrashAlt} />
                         </Button>
+                        </div>
 
                     </div>
                   )}

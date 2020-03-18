@@ -1,5 +1,5 @@
 import { ProjectsBundle } from 'gitlab';
-import {GITLAB_HOST, GITLAB_TOKEN, LABEL_STARRED, LABEL_MYDAY } from '../config.js'
+import {GITLAB_HOST, GITLAB_TOKEN, LABEL_STARRED, LABEL_MYDAY, LABEL_ARCHIVED } from '../config.js'
 export const gitlab = new ProjectsBundle({
   host:   GITLAB_HOST,
   token: GITLAB_TOKEN,
@@ -18,6 +18,9 @@ export async function editTodo(project, issue, data) {
 }
 export async function addComment(project, issue, data) {
   return gitlab.IssueNotes.create(project,issue, data)
+}
+export async function deleteIssue(project, issue) {
+  return gitlab.Issues.remove(project,issue.iid)
 }
 export async function getComments(project, issue) {
   console.log("Getting comments for : issue: " + issue + " on project " + project)
@@ -55,13 +58,18 @@ export async function getWallpaper() {
 }
 
 export async function addIssueToMyDay(project, issue) {
-  console.log("addIssueToMyDay", issue)
   return addLabel(project, issue, LABEL_MYDAY)
 }
 export async function removeIssueFromMyDay(project, issue) {
-  console.log("removeIssueFromMyDay", issue)
 
   return removeLabel(project, issue,  LABEL_MYDAY)
+}
+export async function addIssueArchive(project, issue) {
+  return addLabel(project, issue, LABEL_ARCHIVED)
+}
+export async function removeIssueArchive(project, issue) {
+
+  return removeLabel(project, issue, LABEL_ARCHIVED)
 }
 
 export async function addLabel(project, issue, label) {

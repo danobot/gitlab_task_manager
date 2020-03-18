@@ -5,7 +5,11 @@
   text-align: center;
 }
 
-
+.ant-drawer-body {
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
 .heading-color {
   color: $heading-color;
 }
@@ -46,15 +50,20 @@
   height: 100%;
   background: unset;
   color: $text-color;
+  transition: transform 0.3s cubic-bezier(0.7, 0.3, 0.1, 1), box-shadow 0.3s cubic-bezier(0.7, 0.3, 0.1, 1), -webkit-transform 0.3s cubic-bezier(0.7, 0.3, 0.1, 1), -webkit-box-shadow 0.3s cubic-bezier(0.7, 0.3, 0.1, 1);
 }
 .sidebar * {
   color: $text-color;
  
 }
+.ant-menu-item {
+  cursor: default;
+}
 .ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
   background-color: $heading-color;
+  cursor: default;
 }
-.ant-btn {
+.ant-btn, .ant-btn:active, .ant-btn.active, .ant-btn:focus {
   background: $base-color-hover;
   color: $text-color;
   border: none;

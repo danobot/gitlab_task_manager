@@ -1,15 +1,15 @@
 import React from "react";
 import "./App.scss";
 import "./custom.scss";
-import { Layout, Menu, Popover, message} from "antd";
+import { Layout, Menu, Popover, message, Drawer, Button} from "antd";
 
 import TodoList from "./components/TodoList";
 import { gitlab } from "./api/gitlab";
 import TodoListForm from "./components/TodoListForm";
 import SearchForm from "./components/SearchForm";
-import { LIST_SEPARATOR, PROJECT_ID } from "./config";
+import { LIST_SEPARATOR, PROJECT_ID, LABEL_ARCHIVED } from "./config";
 import DropMenuItem from "./components/DropMenuItem";
-import { faSquare, faStar, faTasks, faCalendarDay } from "@fortawesome/free-solid-svg-icons";
+import { faSquare, faStar, faTasks, faCalendarDay, faBars } from "@fortawesome/free-solid-svg-icons";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,7 +22,8 @@ class App extends React.Component {
     accounts: [],
     addListVisible: false,
     allIssues: [],
-    search: null
+    search: null,
+    sidebarVisible: true
   };
   componentDidMount = () => {
     // Get all labels
@@ -78,7 +79,7 @@ class App extends React.Component {
       );
       console.log("Labels received: ", filteredLabels);
       localStorage.setItem("labels", JSON.stringify(filteredLabels));
-      this.setState({ ...this.state, labels: filteredLabels, label: filteredLabels[0] });
+      this.setState({ ...this.state, labels: filteredLabels });
     });
   }
   hide = () => {
@@ -110,6 +111,15 @@ class App extends React.Component {
       allIssues: issues.sort((a, b) => a.id - b.id)
     });
   };
+  removeTodo = issue => {
+    let issues = this.state.allIssues.filter(i => i.iid !== issue.iid);
+    message.success("Task was removed");
+
+    this.setState({
+      ...this.state,
+      allIssues: issues.sort((a, b) => a.id - b.id)
+    });
+  };
   handleVisibleChange = () => {
     this.setState({ addListVisible: !this.state.addListVisible });
   };
@@ -129,7 +139,17 @@ class App extends React.Component {
     this.setState({label: list, search: null})
     localStorage.setItem("selectedList", JSON.stringify(list))
   }
+  showDrawer = () => {
+    this.setState({
+      sidebarVisible: true,
+    });
+  };
 
+  onClose = () => {
+    this.setState({
+      sidebarVisible: false,
+    });
+  };
   render() {
     const mydaycount = this.state.allIssues.filter(i=> hasLabel(i, "meta::myday")).length
     let issuesToDisplay = []
@@ -148,7 +168,7 @@ class App extends React.Component {
         issuesToDisplay = this.state.allIssues.filter(i => {
           if (this.state.label.name === "ALL") {
             return hasNoListLabel(i)
-          } else if (this.state.label.name !== "meta::archived" && i.labels.indexOf("meta::archived") > -1) {
+          } else if (this.state.label.name !== LABEL_ARCHIVED && i.labels.indexOf(LABEL_ARCHIVED) > -1) {
             return false
           } else {
             return hasLabel(i, this.state.label.name)
@@ -156,12 +176,36 @@ class App extends React.Component {
           }).sort((a, b) => a.id - b.id)
         }
       }
+      let mainstyle = {}
+      if (this.state.sidebarVisible) {
+        mainstyle.marginLeft = "260px";
+      }
+      const buttonStyle= {
+        width: "28px",
+        margin: '10px 0 0 0',
+        marginLeft: '5px',
+        padding: "2px",
+        position: "fixed",
+        top: "-3px",
+        zIndex: 50,
+        left: "-3px"
+      }
     return (
       <Layout theme="dark">
         <Layout  theme="dark">
-          <Sider
+          {this.state.sidebarVisible === false ? <Button size="small"
+          style={{...buttonStyle, ...mainstyle}} 
+          onClick={e=> this.showDrawer()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> : <Button size="small"
+          style={{...buttonStyle, ...mainstyle}} 
+          onClick={e=> this.onClose()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> }
+          <Drawer
             width={250}
-            style={{ background: "$base-color", sidebar: { zIndex: 0 } }}
+            mask={false}
+            placement="left"
+            style={{ background: "$base-color", sidebar: { zIndex: 0 }, padding: 0 }}
+            closable={false}
+            onClose={this.onClose}
+            visible={this.state.sidebarVisible}
           >
             <div>
               <SearchForm onSubmit={search => {
@@ -216,10 +260,10 @@ class App extends React.Component {
                       key={l.id}
                       label={getActualLabelName(l)}
                       right={filterExcluded(this.state.allIssues.filter(i=> hasLabel(i, l.name))).length}
-                      faIcon={<FontAwesomeIcon icon={faSquare} color={l.color} size="lg" style={{marginRight: '20px'}} />}
+                      faicon={<FontAwesomeIcon icon={faSquare} color={l.color} size="lg" style={{marginRight: '20px'}} />}
                     />
                   ))}
-               <span>
+                <span>
                     <Popover
                       content={<TodoListForm onSubmit={this.createList} />}
                       visible={this.state.addListVisible}
@@ -232,15 +276,15 @@ class App extends React.Component {
                     </Popover>
                   </span>
             <div onClick={e => {
-                  this.selectTaskList({  name: "meta::archived", title: "Archived Tasks" } );
+                  this.selectTaskList({  name: LABEL_ARCHIVED, title: "Archived Tasks" } );
                 }} style={{padding: "10px 10px 0px 10px"}}>
               <span className="text-muted">Archived</span>
             </div>
             </Menu>
             
-          </Sider>
+          </Drawer>
 
-          <Layout style={{ padding: "0", minHeight: "100%" }}>
+          <Layout style={{ padding: "0", minHeight: "100%", ...mainstyle }}>
             <Content
               style={{
                 padding: 10,
@@ -251,6 +295,7 @@ class App extends React.Component {
                 <TodoList key={todoListId} label={labelProp} title={titleProp}
                 updateTodo={this.updateTodo}
                 updateTodos={this.updateTodos}
+                removeTodo={this.removeTodo}
                 issues={issuesToDisplay} 
                 onSelectLabel={
                   label => this.setState({label: {name: label, title: label}}) // not using select task list because we dont want to persist this
