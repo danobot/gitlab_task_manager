@@ -37,6 +37,7 @@ import {
 import { faSun as faSunOutline } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { hasLabel } from "../utils";
+import Sidebar from "react-sidebar";
 
 const { Title } = Typography;
 class TodoList extends React.Component {
@@ -128,105 +129,21 @@ class TodoList extends React.Component {
           // breadcrumb={{ route's }}
         ></PageHeader>
         <Row style={{ flexGrow: 1 }}>
-          <Col span={this.state.visible ? 14 : 24} style={{ height: "100%" }}>
-            <Scrollbars autoHide style={{ flexGrow: 1 }}>
-              {this.props.issues.length > 0 ? (
-                <List
-                  theme="dark"
-                  style={{ marginBottom: "60px" }}
-                  size="small"
-                  rowKey="id"
-                  dataSource={this.props.issues}
-                  renderItem={item => (
-                    <Todo
-                      issue={item}
-                      onSelect={e => this.onSelection(item)}
-                      onSelectLabel={this.props.onSelectLabel}
-                      onUpdate={this.props.updateTodo}
-                    />
-                  )}
-                />
-              ) : (
-                <div
-                  className="vertical-center"
-                  style={{ textAlign: "center" }}
-              >{this.props.empty ? this.props.empty : ''}</div>
-              )}
-            </Scrollbars>
-            { this.props.label &&
-            <Formik
-              initialValues={{ title: "" }}
-              onSubmit={(values, { setSubmitting }) => {
-                console.log(values)
-                let title = (' ' + values.title).slice(1);
-                
-                const data = extractLabels(title, this.props.label.name);
-                console.log(data)
-                values.title = "";
-
-                createIssue(PROJECT_ID, data).then(
-                  i => {
-                    var issues = this.props.issues;
-                    issues.push(i);
-                    this.setState({ issues: issues });
-                    message.success("Todo created");
-                    setSubmitting(false);
-                  }
-                );
-              }}
-            >
-              {({
-                values,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting
-              }) => (
-                <Form
-                  onSubmit={handleSubmit}
-                  style={{
-                    flexGrow: 1,
-                    position: "absolute",
-                    bottom: "57px",
-                    left: 0,
-                    right: 0
-                  }}
-                >
-                  <Input
-                    style={{
-                      flexGrow: 1,
-                      border: "unset",
-                      position: "absolute",
-                      left: "0",
-                      right: "0",
-                      height: "50px",
-                      bottom: "-52px",
-                      margin: "10px 16px 7px 16px",
-                      width: "calc(100% - 29px)",
-                      background: "$base-color-lifted"
-                      // padding: 0,
-                    }}
-                    className="todo-row todo-add"
-                    size="large"
-                    name="title"
-                    onChange={handleChange}
-                    placeholder="Add a task"
-                    onBlur={handleBlur}
-                    value={values.title}
-                  />
-                </Form>
-              )}
-            </Formik>
-            }
-          </Col>
-          <Col
-            span={this.state.visible ? 10 : 0}
-            className="sidebar"
-            style={{ height: "100%" }}
-          >
-            <Scrollbars autoHide style={{ flexGrow: 1 }}>
+          
+        <Sidebar
+          sidebarId = "TaskBar"
+          contentId = "TaskBarCopntentId"
+          pullRight={true}
+          docked={true}
+          open={this.state.visible}
+          onSetOpen={()=>this.setState({visible : true})}
+          style={{sidebar: {backgroundColor: "#1a1b1c"}}}
+          width={200}
+          sidebar={
+            <Col span={14}>
+                 <Scrollbars autoHide autoHeight>
               {(this.state.issue && this.state.issue !== null) && (
-                <Card theme="dark" bordered={false} style={{ padding: 0 }} className="sidebar-right">
+                <Card theme="dark" bordered={false} style={{ padding: 0, marginRight: -50 }} >
                   <PageHeader
                     style={{ padding: 0, margin: "0 0 20px 0" }}
                     title={this.state.issue.title}
@@ -326,8 +243,104 @@ class TodoList extends React.Component {
               )}
             
             </Scrollbars>
-           
+            </Col>
+        }
+      
+      >
+        <Col  style={{ height: "100%" }} xs={24} sm={24} md={24} lg={14} xl={14}>
+            <Scrollbars autoHide style={{ flexGrow: 1 }}>
+              {this.props.issues.length > 0 ? (
+                <List
+                  theme="dark"
+                  style={{ marginBottom: "60px" }}
+                  size="small"
+                  rowKey="id"
+                  dataSource={this.props.issues}
+                  renderItem={item => (
+                    <Todo
+                      issue={item}
+                      onSelect={e => this.onSelection(item)}
+                      onSelectLabel={this.props.onSelectLabel}
+                      onUpdate={this.props.updateTodo}
+                    />
+                  )}
+                />
+              ) : (
+                <div
+                  className="vertical-center"
+                  style={{ textAlign: "center" }}
+              >{this.props.empty ? this.props.empty : ''}</div>
+              )}
+            </Scrollbars>
+            { this.props.label &&
+            <Formik
+              initialValues={{ title: "" }}
+              onSubmit={(values, { setSubmitting }) => {
+                console.log(values)
+                let title = (' ' + values.title).slice(1);
+                
+                const data = extractLabels(title, this.props.label.name);
+                console.log(data)
+                values.title = "";
+
+                createIssue(PROJECT_ID, data).then(
+                  i => {
+                    var issues = this.props.issues;
+                    issues.push(i);
+                    this.setState({ issues: issues });
+                    message.success("Todo created");
+                    setSubmitting(false);
+                  }
+                );
+              }}
+            >
+              {({
+                values,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting
+              }) => (
+                <Form
+                  onSubmit={handleSubmit}
+                  style={{
+                    flexGrow: 1,
+                    position: "absolute",
+                    bottom: "57px",
+                    left: 0,
+                    right: 0
+                  }}
+                >
+                  <Input
+                    style={{
+                      flexGrow: 1,
+                      border: "unset",
+                      position: "absolute",
+                      left: "0",
+                      right: "0",
+                      height: "50px",
+                      bottom: "-52px",
+                      margin: "10px 16px 7px 16px",
+                      width: "calc(100% - 29px)",
+                      background: "$base-color-lifted"
+                      // padding: 0,
+                    }}
+                    className="todo-row todo-add"
+                    size="large"
+                    name="title"
+                    onChange={handleChange}
+                    placeholder="Add a task"
+                    onBlur={handleBlur}
+                    value={values.title}
+                  />
+                </Form>
+              )}
+            </Formik>
+            }
           </Col>
+      </Sidebar>
+          
+          
           {/* <Col span={this.state.visible ? 18 : 24} style={{ height: "100%" }}>
 
 
