@@ -5,4 +5,4 @@ export const LABEL_MYDAY = 'meta::myday'
 export const LABEL_ARCHIVED = 'meta::archived'
 
 export const GITLAB_HOST = 'http://localhost'
-export const GITLAB_TOKEN = 'JCs68tSXFEsytm9VY_zU'
+export const GITLAB_TOKEN = 'token'
