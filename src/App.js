@@ -9,7 +9,7 @@ import TodoListForm from "./components/TodoListForm";
 import SearchForm from "./components/SearchForm";
 import { LIST_SEPARATOR, PROJECT_ID, LABEL_ARCHIVED } from "./config";
 import DropMenuItem from "./components/DropMenuItem";
-import { faSquare, faStar, faTasks, faCalendarDay, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faSquare, faStar, faTasks, faCalendarDay, faBars, faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "react-sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,7 +23,8 @@ class App extends React.Component {
     addListVisible: false,
     allIssues: [],
     search: null,
-    sidebarVisible: true
+    sidebarVisible: true,
+    docked: false
   };
   componentDidMount = () => {
     // Get all labels
@@ -148,6 +149,7 @@ class App extends React.Component {
   onClose = () => {
     this.setState({
       sidebarVisible: false,
+      docked: false
     });
   };
   render() {
@@ -202,7 +204,7 @@ class App extends React.Component {
                 <div>
                 <div>
                 <SearchForm onSubmit={search => {
-                  this.setState({search: search.search})
+                  this.setState({search: search.search});
                 }}/>
               </div>
               <Menu 
@@ -288,11 +290,8 @@ class App extends React.Component {
             style={{sidebar: {backgroundColor: "rgb(37, 38, 39)"}}}
           >
             <Layout  theme="dark">
-            {this.state.sidebarVisible === false ? <Button size="small"
-            style={{...buttonStyle, ...mainstyle}} 
-            onClick={e=> this.showDrawer()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> : <Button size="small"
-            style={{...buttonStyle, ...mainstyle}} 
-            onClick={e=> this.onClose()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> }
+            {this.state.sidebarVisible === false && <Button size="small" style={{...buttonStyle, ...mainstyle}} onClick={e=> this.showDrawer()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button>}
+            {this.state.sidebarVisible && <Button size="small" style={{...buttonStyle, ...mainstyle}}  onClick={e=> this.onClose()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> }
       
 
             <Layout style={{ padding: "0", minHeight: "100%", ...mainstyle }} >

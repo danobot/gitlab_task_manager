@@ -98,7 +98,8 @@
 }
 
 .ant-card-body {
-  padding: 0;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 html,
 body,
@@ -156,3 +157,11 @@ h2.ant-typography,
   float: right;
 }
 
+.resync .ant-page-header-heading-extra {
+  padding-top: 12px;
+  display: block;
+  width: unset;
+  float: right;
+  margin-bottom: 0.5em;
+  margin-top: -6px;
+}
