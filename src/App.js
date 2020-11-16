@@ -9,9 +9,9 @@ import TodoListForm from "./components/TodoListForm";
 import SearchForm from "./components/SearchForm";
 import { LIST_SEPARATOR, PROJECT_ID, LABEL_ARCHIVED } from "./config";
 import DropMenuItem from "./components/DropMenuItem";
-import { faSquare, faStar, faTasks, faCalendarDay, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faSquare, faStar, faTasks, faCalendarDay, faBars, faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
-
+import Sidebar from "react-sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getActualLabelName, hasLabel, hasNoListLabel, filterExcluded } from "./utils";
 
@@ -23,7 +23,8 @@ class App extends React.Component {
     addListVisible: false,
     allIssues: [],
     search: null,
-    sidebarVisible: true
+    sidebarVisible: true,
+    docked: false
   };
   componentDidMount = () => {
     // Get all labels
@@ -148,6 +149,7 @@ class App extends React.Component {
   onClose = () => {
     this.setState({
       sidebarVisible: false,
+      docked: false
     });
   };
   render() {
@@ -177,134 +179,142 @@ class App extends React.Component {
         }
       }
       let mainstyle = {}
-      if (this.state.sidebarVisible) {
-        mainstyle.marginLeft = "260px";
-      }
       const buttonStyle= {
         width: "28px",
-        margin: '10px 0 0 0',
-        marginLeft: '5px',
+        margin: '10px 0 0 0px',
         padding: "2px",
         position: "fixed",
         top: "-3px",
         zIndex: 50,
-        left: "-3px"
+        left: "10px"
+      }
+      if (this.state.sidebarVisible) {
+        buttonStyle.left = "260px";
+      } else {
+        
+
       }
     return (
-      <Layout theme="dark">
-        <Layout  theme="dark">
-          {this.state.sidebarVisible === false ? <Button size="small"
-          style={{...buttonStyle, ...mainstyle}} 
-          onClick={e=> this.showDrawer()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> : <Button size="small"
-          style={{...buttonStyle, ...mainstyle}} 
-          onClick={e=> this.onClose()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> }
-          <Drawer
-            width={250}
-            mask={false}
-            placement="left"
-            style={{ background: "$base-color", sidebar: { zIndex: 0 }, padding: 0 }}
-            closable={false}
-            onClose={this.onClose}
-            visible={this.state.sidebarVisible}
+ 
+          
+          <Sidebar
+            sidebarId="mainMenu"
+            sidebarClassName="main-menu-class"
+            sidebar={
+                <div>
+                <div>
+                <SearchForm onSubmit={search => {
+                  this.setState({search: search.search});
+                }}/>
+              </div>
+              <Menu 
+              theme="dark"
+                mode="inline"
+                defaultSelectedKeys={["1"]}
+                defaultOpenKeys={["accounts", "todolists"]}
+                style={{ borderRight: 0, width:'250px' }}
+              >
+                <DropMenuItem
+                  onClick={e => {
+                    this.selectTaskList({  name: "meta::myday", title: "My Day" } );
+                    this.onClose();
+                  }}
+                  icon={faCalendarDay}
+                  right={mydaycount}
+                  key={"meta::myday"}
+                  label="My Day"
+                  title="My Day"
+                />
+                <DropMenuItem
+                  onClick={e => {
+                    this.selectTaskList({ name: "ALL", title: "My Tasks"});
+                    this.onClose();
+                  }}
+                  icon={faTasks}
+                  right={filterExcluded(this.state.allIssues.filter(i=> hasNoListLabel(i))).length}
+                  key="mytasks"
+                  label="My Tasks"
+                  title="My Tasks"
+                />
+                <DropMenuItem
+                  onClick={e => {
+                    this.selectTaskList({  name: "meta::starred", title: "Important Tasks" } );
+                    this.onClose();
+                  }}
+                  icon={faStar}
+                  right={filterExcluded(this.state.allIssues.filter(i=> hasLabel(i, "meta::starred"))).length}
+
+                  key={"meta::starred"}
+                  label="Important"
+                  title="Important"
+                />
+                    <Menu.Divider />
+              
+              
+                  { this.state.labels &&
+                    this.state.labels.map(l => (
+                      <DropMenuItem
+                        onClick={e => {
+                          this.selectTaskList( l )
+                          this.onClose()
+                        }}
+                        key={l.id}
+                        label={getActualLabelName(l)}
+                        right={filterExcluded(this.state.allIssues.filter(i=> hasLabel(i, l.name))).length}
+                        faicon={<FontAwesomeIcon icon={faSquare} color={l.color} size="lg" style={{marginRight: '20px'}} />}
+                      />
+                    ))}
+                  <span>
+                      <Popover
+                        content={<TodoListForm onSubmit={this.createList} />}
+                        visible={this.state.addListVisible}
+                        onVisibleChange={this.handleVisibleChange}
+                        title="Add List"
+                        trigger="click"
+                      >
+                          
+                        <FontAwesomeIcon icon={faPlusSquare} className="heading-color" style={{ float: "right", cursor: 'hand', marginRight: '17px' }} size="lg" onClick={e => this.handleVisibleChange()}/>
+                      </Popover>
+                    </span>
+              <div onClick={e => {
+                    this.selectTaskList({  name: LABEL_ARCHIVED, title: "Archived Tasks" } );
+                  }} style={{padding: "10px 10px 0px 10px"}}>
+                <span className="text-muted">Archived</span>
+              </div>
+              </Menu>
+              </div>
+
+                }
+            open={this.state.sidebarVisible}
+            onSetOpen={this.showDrawer}
+            style={{sidebar: {backgroundColor: "rgb(37, 38, 39)"}}}
           >
-            <div>
-              <SearchForm onSubmit={search => {
-                this.setState({search: search.search})
-              }}/>
-            </div>
-            <Menu 
-            theme="dark"
-              mode="inline"
-              defaultSelectedKeys={["1"]}
-              defaultOpenKeys={["accounts", "todolists"]}
-              style={{ height: "100%", borderRight: 0 }}
-            >
-              <DropMenuItem
-                onClick={e => {
-                  this.selectTaskList({  name: "meta::myday", title: "My Day" } );
-                }}
-                icon={faCalendarDay}
-                right={mydaycount}
-                key={"meta::myday"}
-                label="My Day"
-                title="My Day"
-              />
-              <DropMenuItem
-                onClick={e => {
-                  this.selectTaskList({ name: "ALL", title: "My Tasks"});
-                }}
-                icon={faTasks}
-                right={filterExcluded(this.state.allIssues.filter(i=> hasNoListLabel(i))).length}
-                key="mytasks"
-                label="My Tasks"
-                title="My Tasks"
-              />
-              <DropMenuItem
-                onClick={e => {
-                  this.selectTaskList({  name: "meta::starred", title: "Important Tasks" } );
-                }}
-                icon={faStar}
-                right={filterExcluded(this.state.allIssues.filter(i=> hasLabel(i, "meta::starred"))).length}
+            <Layout  theme="dark">
+            {this.state.sidebarVisible === false && <Button size="small" style={{...buttonStyle, ...mainstyle}} onClick={e=> this.showDrawer()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button>}
+            {this.state.sidebarVisible && <Button size="small" style={{...buttonStyle, ...mainstyle}}  onClick={e=> this.onClose()}><FontAwesomeIcon icon={faBars}  size="lg" /></Button> }
+      
 
-                key={"meta::starred"}
-                label="Important"
-                title="Important"
-              />
-                   <Menu.Divider />
-             
-            
-                { this.state.labels &&
-                  this.state.labels.map(l => (
-                    <DropMenuItem
-                      onClick={e => this.selectTaskList( l )}
-                      key={l.id}
-                      label={getActualLabelName(l)}
-                      right={filterExcluded(this.state.allIssues.filter(i=> hasLabel(i, l.name))).length}
-                      faicon={<FontAwesomeIcon icon={faSquare} color={l.color} size="lg" style={{marginRight: '20px'}} />}
-                    />
-                  ))}
-                <span>
-                    <Popover
-                      content={<TodoListForm onSubmit={this.createList} />}
-                      visible={this.state.addListVisible}
-                      onVisibleChange={this.handleVisibleChange}
-                      title="Add List"
-                      trigger="click"
-                    >
-                        
-                      <FontAwesomeIcon icon={faPlusSquare} className="heading-color" style={{ float: "right", cursor: 'hand', marginRight: '17px' }} size="lg" onClick={e => this.handleVisibleChange()}/>
-                    </Popover>
-                  </span>
-            <div onClick={e => {
-                  this.selectTaskList({  name: LABEL_ARCHIVED, title: "Archived Tasks" } );
-                }} style={{padding: "10px 10px 0px 10px"}}>
-              <span className="text-muted">Archived</span>
-            </div>
-            </Menu>
-            
-          </Drawer>
-
-          <Layout style={{ padding: "0", minHeight: "100%", ...mainstyle }}>
-            <Content
-              style={{
-                padding: 10,
-                margin: 0
-              }}
-            >
-              {this.state.label && (
-                <TodoList key={todoListId} label={labelProp} title={titleProp}
-                updateTodo={this.updateTodo}
-                updateTodos={this.updateTodos}
-                removeTodo={this.removeTodo}
-                issues={issuesToDisplay} 
-                onSelectLabel={
-                  label => this.setState({label: {name: label, title: label}}) // not using select task list because we dont want to persist this
-                } />
-              )}
-            </Content>
-          </Layout>
+            <Layout style={{ padding: "0", minHeight: "100%", ...mainstyle }} >
+              <Content
+                style={{
+                  padding: 10,
+                  margin: 0
+                }}
+              >
+                {this.state.label && (
+                  <TodoList key={todoListId} label={labelProp} title={titleProp}
+                  updateTodo={this.updateTodo}
+                  updateTodos={this.updateTodos}
+                  removeTodo={this.removeTodo}
+                  issues={issuesToDisplay} 
+                  onSelectLabel={
+                    label => this.setState({label: {name: label, title: label}}) // not using select task list because we dont want to persist this
+                  } />
+                )}
+              </Content>
+            </Layout>
         </Layout>
-      </Layout>
+      </Sidebar>
     );
   }
 }

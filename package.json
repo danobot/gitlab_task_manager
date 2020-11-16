@@ -5,8 +5,8 @@
   "author": "danobot",
   "description": "todo app",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/danobot/notorious.git"
+    "type": "git",
+    "url": "https://github.com/danobot/notorious.git"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.27",

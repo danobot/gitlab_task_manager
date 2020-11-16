@@ -113,7 +113,7 @@ class TodoList extends React.Component {
   render() {
     return (
       <div style={{ display: "flex", flexFlow: "column", height: "100%" }}>
-        <PageHeader
+        <PageHeader className="resync"
           style={{ height: "100px" }}
           title={
             <Title className="heading-color" level={2}>
@@ -121,14 +121,17 @@ class TodoList extends React.Component {
             </Title>
           }
           extra={[
-            <Button onClick={e => this.props.updateTodos()} key="2">
+            <Button onClick={e => this.props.updateTodos()} key="2" > 
               <FontAwesomeIcon icon={faSyncAlt} />
             </Button>
           ]}
           // breadcrumb={{ route's }}
         ></PageHeader>
         <Row style={{ flexGrow: 1 }}>
-          <Col span={this.state.visible ? 14 : 24} style={{ height: "100%" }}>
+          <Col 
+            xl={this.state.visible ? 14 : 24} 
+            sm={24} 
+            style={{ height: "100%" }}>
             <Scrollbars autoHide style={{ flexGrow: 1 }}>
               {this.props.issues.length > 0 ? (
                 <List
@@ -220,11 +223,12 @@ class TodoList extends React.Component {
             }
           </Col>
           <Col
-            span={this.state.visible ? 10 : 0}
+            xl={this.state.visible ? 10 : 0}
+            sm={24}
             className="sidebar"
             style={{ height: "100%" }}
           >
-            <Scrollbars autoHide style={{ flexGrow: 1 }}>
+            <Scrollbars autoHide style={{ flexGrow: 1, marginRight: "0px"}}>
               {(this.state.issue && this.state.issue !== null) && (
                 <Card theme="dark" bordered={false} style={{ padding: 0 }} className="sidebar-right">
                   <PageHeader
