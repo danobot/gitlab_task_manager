@@ -69,7 +69,7 @@
   },
   "devDependencies": {
     "concurrently": "^5.1.0",
-    "electron": "^8.0.1",
+    "electron": "^13.6.6",
     "electron-builder": "^22.3.2",
     "electron-packager": "^14.2.1",
     "openapi-client": "^1.0.5",
